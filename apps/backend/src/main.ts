@@ -1,15 +1,24 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
-  // CORS: в dev разрешаем localhost и все origins, в production только указанный FRONTEND_URL
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  );
+
+  // CORS: allow localhost in dev, use FRONTEND_URL in production
   const isDev = process.env.NODE_ENV !== 'production';
   app.enableCors({
     origin: isDev
-      ? ['http://localhost:3000', 'http://127.0.0.1:3000'] // в dev разрешаем локальные адреса
-      : process.env.FRONTEND_URL || 'http://localhost:3000', // в production только указанный домен
+      ? ['http://localhost:3000', 'http://127.0.0.1:3000'] // allow local addresses in dev
+      : process.env.FRONTEND_URL || 'http://localhost:3000', // use specified domain in production
     credentials: true,
   });
 

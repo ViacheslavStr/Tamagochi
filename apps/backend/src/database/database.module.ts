@@ -22,6 +22,6 @@ import type { DrizzleDB } from './drizzle.provider';
 })
 export class DatabaseModule {}
 
-// Для инжекта в сервисах: @Inject(DRIZZLE) private db: DrizzleDB
+// For injection in services: @Inject(DRIZZLE) private db: DrizzleDB
 export { DRIZZLE };
 export type { DrizzleDB };

@@ -1,0 +1,215 @@
+.registerPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: linear-gradient(160deg, #fdf8f3 0%, #f5ebe0 50%, #ede4d9 100%);
+}
+
+.registerCard {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(139, 90, 60, 0.12), 0 2px 8px rgba(139, 90, 60, 0.06);
+  padding: 2.5rem;
+  border: 1px solid rgba(139, 90, 60, 0.08);
+}
+
+.registerHeader {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.registerHeader h1 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #3d2914;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
+}
+
+.registerHeader p {
+  font-size: 0.95rem;
+  color: #6b5344;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.registerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.fieldGroup label,
+.fieldGroup .label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #4a3728;
+}
+
+.fieldGroup input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #d4c4b0;
+  border-radius: 12px;
+  background: #fdfcfa;
+  color: #2c1810;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.fieldGroup input::placeholder {
+  color: #a89888;
+}
+
+.fieldGroup input:hover:not(:disabled) {
+  border-color: #c4b09a;
+}
+
+.fieldGroup input:focus {
+  outline: none;
+  border-color: #b8956b;
+  box-shadow: 0 0 0 3px rgba(184, 149, 107, 0.2);
+}
+
+.fieldGroup input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.roleOptions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.roleBtn {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: 2px solid #d4c4b0;
+  border-radius: 12px;
+  background: #fdfcfa;
+  color: #4a3728;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.roleBtn:hover:not(:disabled) {
+  border-color: #b8956b;
+  background: #faf6f0;
+}
+
+.roleBtn.active {
+  border-color: #a67c52;
+  background: #f0e6dc;
+  color: #3d2914;
+}
+
+.roleBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.formError {
+  font-size: 0.9rem;
+  color: #b85450;
+  margin: -0.25rem 0 0;
+}
+
+.submitBtn {
+  margin-top: 0.5rem;
+  padding: 1rem 1.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #a67c52 0%, #8b6b47 100%);
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  box-shadow: 0 4px 14px rgba(139, 90, 60, 0.35);
+}
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.submitBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submitBtn:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+/* Success state */
+.successCard {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 2.5rem;
+  text-align: center;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(139, 90, 60, 0.12);
+  border: 1px solid rgba(139, 90, 60, 0.08);
+}
+
+.successIcon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #7a9b76 0%, #5d7e5a 100%);
+  border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(93, 126, 90, 0.4);
+}
+
+.successCard h2 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #3d2914;
+  margin: 0 0 0.75rem;
+}
+
+.successCard p {
+  font-size: 0.95rem;
+  color: #6b5344;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.loginLink {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6b5344;
+  margin-top: 1rem;
+}
+
+.loginLink a {
+  color: #8b6b47;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.loginLink a:hover {
+  text-decoration: underline;
+}
