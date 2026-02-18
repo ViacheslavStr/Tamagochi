@@ -40,4 +40,9 @@ export class UsersService {
     const [user] = await this.db.select().from(users).where(eq(users.email, email.toLowerCase().trim())).limit(1);
     return user || null;
   }
+
+  async findById(id: string) {
+    const [user] = await this.db.select().from(users).where(eq(users.id, id)).limit(1);
+    return user || null;
+  }
 }

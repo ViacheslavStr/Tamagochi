@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { saveAuthData } from '@/lib/auth';
 import styles from './login.module.css';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300';
@@ -33,8 +34,10 @@ export default function LoginPage() {
         setError(message);
         return;
       }
-      // TODO: Store token/session and redirect to dashboard
-      router.push('/');
+      // Save tokens and user data
+      saveAuthData(data.accessToken, data.refreshToken, data.user);
+      // Redirect to onboarding
+      router.push('/onboarding');
     } catch {
       setError('Failed to connect to server. Make sure the backend is running.');
     } finally {

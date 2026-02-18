@@ -8,7 +8,7 @@ export default function Home() {
         <h1 className={styles.title}>Tamagochi</h1>
         <p className={styles.subtitle}>Your Electronic Child</p>
         <p className={styles.description}>
-          Experience parenthood simulation: upload photos, fill out a questionnaire, and watch your AI-generated child grow, learn, and interact with you.
+          Experience parenthood simulation: upload photos (yours and your partner’s, or even a celebrity or friend’s), fill out a questionnaire for each parent, and watch your AI-generated child grow, learn, and interact with you.
         </p>
         <div className={styles.cta}>
           <Link href="/register" className={styles.primaryBtn}>
@@ -26,12 +26,12 @@ export default function Home() {
           <div className={styles.step}>
             <div className={styles.stepNumber}>1</div>
             <h3>Register & Upload</h3>
-            <p>Create your account and upload photos/videos of both parents. Fill out a questionnaire about your traits and characteristics.</p>
+            <p>Create your account and upload photos/videos of both “parents” — you and your partner, or you and a celebrity/friend to see what your child would look like. Fill out a short questionnaire for each parent (traits and characteristics).</p>
           </div>
           <div className={styles.step}>
             <div className={styles.stepNumber}>2</div>
             <h3>AI Generation</h3>
-            <p>Our AI creates a model of your future child — combining facial features from both parents and personality traits from your questionnaire.</p>
+            <p>Our AI creates a model of your future child — combining facial features and personality traits from both parents' questionnaires.</p>
           </div>
           <div className={styles.step}>
             <div className={styles.stepNumber}>3</div>

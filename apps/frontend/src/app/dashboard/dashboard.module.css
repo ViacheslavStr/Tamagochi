@@ -1,0 +1,52 @@
+.dashboardPage {
+  min-height: 100vh;
+  padding: 2rem 1.5rem;
+  background: linear-gradient(160deg, #fdf8f3 0%, #f5ebe0 50%, #ede4d9 100%);
+}
+
+.dashboardCard {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(139, 90, 60, 0.12), 0 2px 8px rgba(139, 90, 60, 0.06);
+  padding: 2.5rem;
+  border: 1px solid rgba(139, 90, 60, 0.08);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #3d2914;
+  margin: 0;
+}
+
+.logoutBtn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid #d4c4b0;
+  border-radius: 8px;
+  background: #fff;
+  color: #8b6b47;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.logoutBtn:hover {
+  border-color: #b8956b;
+}
+
+.dashboardCard p {
+  font-size: 1rem;
+  color: #6b5344;
+  line-height: 1.6;
+}
