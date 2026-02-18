@@ -13,8 +13,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "type-check": "tsc --noEmit",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
+    "db:generate": "drizzle-kit generate:pg",
+    "db:migrate": "ts-node -r tsconfig-paths/register src/database/migrate.ts",
+    "db:push": "drizzle-kit push:pg",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {

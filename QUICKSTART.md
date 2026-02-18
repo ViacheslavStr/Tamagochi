@@ -7,14 +7,25 @@
    pnpm install
    ```
 
-2. **PostgreSQL:** бэкенд использует PostgreSQL. Запустите сервер и создайте базу:
+2. **PostgreSQL:** отдельный кластер PostgreSQL 17 уже создан на порту 5433.
+   
+   **Запуск кластера:**
    ```bash
-   # Локально: создайте БД (пример для macOS с Homebrew)
-   createdb tamagochi
-
-   # Или через Docker Compose (из корня проекта):
-   docker compose up -d
-   # Тогда в .env.local: DATABASE_URL=postgresql://tamagochi:tamagochi@localhost:5432/tamagochi
+   ./scripts/start-postgres-tamagochi.sh
+   # или
+   pg_ctl -D ~/postgres-tamagochi -l ~/postgres-tamagochi/logfile start
+   ```
+   
+   **Добавление в PGAdmin:**
+   - Правый клик на "Servers" → "Register" → "Server..."
+   - Name: `Tamagochi`
+   - Host: `localhost`, Port: `5433`
+   - Database: `tamagochi`
+   - Username: ваше имя пользователя macOS
+   
+   **Остановка:**
+   ```bash
+   ./scripts/stop-postgres-tamagochi.sh
    ```
 
 3. **Настройте переменные окружения:**
@@ -33,8 +44,13 @@
 
    После первого запуска БД примените миграции Drizzle (из корня или из `apps/backend`):
    ```bash
+   # Генерация миграций из схемы
    pnpm --filter backend db:generate
+   # Применение миграций к БД
    pnpm --filter backend db:migrate
+   
+   # Альтернатива для разработки: быстрое применение изменений без миграций
+   # pnpm --filter backend db:push
    ```
 
 4. **Запустите проект:**
