@@ -111,7 +111,7 @@
 
 ### 3.3 Состояние ребёнка (модель «жизни»)
 
-- **Хранилище:** PostgreSQL или SQLite (для одного ребёнка на пару достаточно SQLite).
+- **Хранилище:** PostgreSQL.
 - **Сущности:**
   - **Child:** id, id_family, birth_timestamp, current_age_stage, personality_vector, health/happiness (опционально).
   - **Traits:** производные от анкеты + возможные мутации/вариации.
@@ -218,7 +218,7 @@ backend/                  # NestJS
 | Бэкенд | **NestJS** (API, крон, WebSocket, очереди) | См. п. 3.0, 4.1 |
 | Real-time | **WebSocket** (NestJS Gateway): события «ребёнок зовёт», обновления состояния | — |
 | Фоновые/периодические задачи | **@nestjs/schedule** (крон) + **BullMQ** (очереди) | — |
-| БД | SQLite | PostgreSQL |
+| БД | **PostgreSQL** (Drizzle ORM в NestJS) | — |
 | LLM (чат) | **OpenAI** GPT-4o-mini — готовый API | Claude, др. API |
 | Память для диалога | Простой список последних фактов или векторный поиск (API embeddings) | — |
 | Озвучка | **OpenAI TTS** или ElevenLabs — готовый API | — |

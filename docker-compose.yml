@@ -1,0 +1,19 @@
+# Локальная разработка: только PostgreSQL
+# Запуск: docker compose up -d
+# DATABASE_URL=postgresql://tamagochi:tamagochi@localhost:5432/tamagochi
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tamagochi-db
+    environment:
+      POSTGRES_USER: tamagochi
+      POSTGRES_PASSWORD: tamagochi
+      POSTGRES_DB: tamagochi
+    ports:
+      - "5432:5432"
+    volumes:
+      - tamagochi_pgdata:/var/lib/postgresql/data
+
+volumes:
+  tamagochi_pgdata:

@@ -7,7 +7,17 @@
    pnpm install
    ```
 
-2. **Настройте переменные окружения:**
+2. **PostgreSQL:** бэкенд использует PostgreSQL. Запустите сервер и создайте базу:
+   ```bash
+   # Локально: создайте БД (пример для macOS с Homebrew)
+   createdb tamagochi
+
+   # Или через Docker Compose (из корня проекта):
+   docker compose up -d
+   # Тогда в .env.local: DATABASE_URL=postgresql://tamagochi:tamagochi@localhost:5432/tamagochi
+   ```
+
+3. **Настройте переменные окружения:**
    
    Скопируйте примеры и заполните нужные ключи:
    ```bash
@@ -15,9 +25,19 @@
    cp apps/backend/.env.example apps/backend/.env.local
    ```
    
-   Откройте `apps/backend/.env.local` и добавьте API ключи (минимум для начала работы не обязательны, но понадобятся для полной функциональности).
+   В `apps/backend/.env.local` обязательно укажите **DATABASE_URL** (подставьте свои user/password/host при необходимости):
+   ```env
+   DATABASE_URL=postgresql://user:password@localhost:5432/tamagochi
+   ```
+   Остальные API ключи (Replicate, OpenAI и т.д.) понадобятся позже для полной функциональности.
 
-3. **Запустите проект:**
+   После первого запуска БД примените миграции Drizzle (из корня или из `apps/backend`):
+   ```bash
+   pnpm --filter backend db:generate
+   pnpm --filter backend db:migrate
+   ```
+
+4. **Запустите проект:**
    ```bash
    pnpm dev
    ```

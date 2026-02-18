@@ -43,6 +43,9 @@ Thumbs.db
 *.sqlite
 *.sqlite3
 
+# Drizzle
+drizzle/
+
 # Uploads
 uploads/
 public/uploads/
