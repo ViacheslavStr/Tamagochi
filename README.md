@@ -46,8 +46,8 @@ pnpm install
 pnpm dev
 
 # Или запустить отдельно:
-pnpm --filter frontend dev  # http://localhost:3000
-pnpm --filter backend dev   # http://localhost:3001
+pnpm --filter frontend dev  # http://localhost:3301
+pnpm --filter backend dev   # http://localhost:3300
 ```
 
 ## Сборка
@@ -76,8 +76,8 @@ NEXT_PUBLIC_API_URL=http://localhost:3001
 
 **apps/backend/.env.local:**
 ```env
-PORT=3001
-FRONTEND_URL=http://localhost:3000
+PORT=3300
+FRONTEND_URL=http://localhost:3301
 # Добавьте ключи API для Replicate, OpenAI и т.д.
 ```
 

@@ -59,13 +59,13 @@
    ```
    
    Это запустит:
-   - Frontend на http://localhost:3000
-   - Backend на http://localhost:3001
+   - Frontend на http://localhost:3301
+   - Backend на http://localhost:3300
 
 ## Проверка работы
 
-- Frontend: откройте http://localhost:3000 — должна открыться страница с заголовком "Tamagochi — Электронный ребёнок"
-- Backend: откройте http://localhost:3001/health — должен вернуться `{"status":"ok","timestamp":"..."}`
+- Frontend: откройте http://localhost:3301 — должна открыться страница с заголовком "Tamagochi — Электронный ребёнок"
+- Backend: откройте http://localhost:3300/health — должен вернуться `{"status":"ok","timestamp":"..."}`
 
 ## Структура команд
 

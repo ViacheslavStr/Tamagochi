@@ -1,23 +1,17 @@
-import { pgTable, uuid, timestamp, text, integer, pgEnum, jsonb, unique } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, timestamp, text, integer, pgEnum, jsonb } from 'drizzle-orm/pg-core';
 
 // User role enum
 export const userRoleEnum = pgEnum('user_role', ['mother', 'father', 'brother', 'sister']);
 
-// Family parent role (order in the pair)
-export const familyParentRoleEnum = pgEnum('family_parent_role', ['parent1', 'parent2']);
-
-// Parent media type
-export const parentMediaTypeEnum = pgEnum('parent_media_type', ['photo', 'video']);
+// User media type
+export const userMediaTypeEnum = pgEnum('user_media_type', ['photo', 'video']);
 
 // Users table
+// Only email and password for registration. Personal data (firstName, lastName, age, role) goes to user_profiles
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
-  firstName: text('first_name').notNull(),
-  lastName: text('last_name').notNull(),
-  age: integer('age').notNull(),
-  role: userRoleEnum('role').notNull(),
-  email: text('email').notNull().unique(),
-  passwordHash: text('password_hash').notNull(),
+  email: text('email').unique(), // nullable: partner may not have email
+  passwordHash: text('password_hash'), // nullable: partner created from questionnaire doesn't need password
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
@@ -33,20 +27,19 @@ export const refreshTokens = pgTable('refresh_tokens', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
-// Health check table (can be removed later)
-export const healthCheck = pgTable('health_check', {
+// --- User profile (questionnaire) ---
+// One profile per user - personal data + questionnaire
+export const userProfiles = pgTable('user_profiles', {
   id: uuid('id').primaryKey().defaultRandom(),
-  checkedAt: timestamp('checked_at', { withTimezone: true }).defaultNow().notNull(),
-});
-
-// --- Onboarding: parents, questionnaire, photos ---
-
-// One record per "parent" (the user or the partner/celebrity). Questionnaire data lives here.
-export const parentProfiles = pgTable('parent_profiles', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }), // set when this profile is the logged-in user
-  firstName: text('first_name'),
-  lastName: text('last_name'),
+  userId: uuid('user_id')
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  // Personal data (moved from users table)
+  firstName: text('first_name').notNull(),
+  lastName: text('last_name').notNull(),
+  age: integer('age').notNull(),
+  role: userRoleEnum('role').notNull(),
   // Questionnaire
   height: text('height'),
   build: text('build'),
@@ -62,43 +55,29 @@ export const parentProfiles = pgTable('parent_profiles', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
-// Photos/videos per parent profile (storage path or URL)
-export const parentMedia = pgTable('parent_media', {
+// --- User media (photos/videos) ---
+// Photos/videos per user (storage path or URL)
+export const userMedia = pgTable('user_media', {
   id: uuid('id').primaryKey().defaultRandom(),
-  parentProfileId: uuid('parent_profile_id')
+  userId: uuid('user_id')
     .notNull()
-    .references(() => parentProfiles.id, { onDelete: 'cascade' }),
+    .references(() => users.id, { onDelete: 'cascade' }),
   filePath: text('file_path').notNull(), // path in storage or URL
-  mediaType: parentMediaTypeEnum('media_type').notNull(),
+  mediaType: userMediaTypeEnum('media_type').notNull(),
   sortOrder: integer('sort_order').default(0).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
-// A "family" is the pair of two parents (created by the logged-in user)
+// --- Families ---
+// Simple family: father + mother (both are users)
 export const families = pgTable('families', {
   id: uuid('id').primaryKey().defaultRandom(),
-  createdByUserId: uuid('created_by_user_id')
+  fatherId: uuid('father_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  motherId: uuid('mother_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
-
-// Junction: which parent profiles belong to which family, and their role (parent1 / parent2)
-export const familyParents = pgTable(
-  'family_parents',
-  {
-    id: uuid('id').primaryKey().defaultRandom(),
-    familyId: uuid('family_id')
-      .notNull()
-      .references(() => families.id, { onDelete: 'cascade' }),
-    parentProfileId: uuid('parent_profile_id')
-      .notNull()
-      .references(() => parentProfiles.id, { onDelete: 'cascade' }),
-    role: familyParentRoleEnum('role').notNull(),
-    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  },
-  (table) => ({
-    familyParentsFamilyRoleUnique: unique('family_parents_family_role_unique').on(table.familyId, table.role),
-  }),
-);

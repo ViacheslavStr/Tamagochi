@@ -11,7 +11,11 @@ export class UsersService {
 
   async create(dto: CreateUserDto) {
     // Check if email already exists
-    const existing = await this.db.select().from(users).where(eq(users.email, dto.email.toLowerCase().trim())).limit(1);
+    const existing = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.email, dto.email.toLowerCase().trim()))
+      .limit(1);
     if (existing.length > 0) {
       throw new ConflictException('Email already registered');
     }
@@ -22,10 +26,6 @@ export class UsersService {
     const [user] = await this.db
       .insert(users)
       .values({
-        firstName: dto.firstName.trim(),
-        lastName: dto.lastName.trim(),
-        age: dto.age,
-        role: dto.role,
         email: dto.email.toLowerCase().trim(),
         passwordHash,
       })
@@ -37,7 +37,12 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    const [user] = await this.db.select().from(users).where(eq(users.email, email.toLowerCase().trim())).limit(1);
+    if (!email) return null;
+    const [user] = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.email, email.toLowerCase().trim()))
+      .limit(1);
     return user || null;
   }
 

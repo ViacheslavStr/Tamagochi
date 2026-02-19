@@ -9,7 +9,7 @@ import styles from './dashboard.module.css';
 export default function DashboardPage() {
   const router = useRouter();
   const { t } = useTranslation();
-  const [user, setUser] = useState<{ firstName: string } | null>(null);
+  const [user, setUser] = useState<{ email?: string } | null>(null);
   const [mounted, setMounted] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
@@ -41,7 +41,7 @@ export default function DashboardPage() {
     <div className={styles.dashboardPage}>
       <div className={styles.dashboardCard}>
         <header className={styles.header}>
-          <h1>{t('dashboard.welcome', { name: user.firstName })}</h1>
+          <h1>{t('dashboard.welcome', { name: user.email || 'User' })}</h1>
           <button onClick={handleLogout} className={styles.logoutBtn} disabled={loggingOut}>
             {loggingOut ? t('dashboard.loggingOut') : t('common.logout')}
           </button>

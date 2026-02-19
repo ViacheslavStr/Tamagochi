@@ -17,12 +17,12 @@ async function bootstrap() {
   const isDev = process.env.NODE_ENV !== 'production';
   app.enableCors({
     origin: isDev
-      ? ['http://localhost:3000', 'http://127.0.0.1:3000'] // allow local addresses in dev
-      : process.env.FRONTEND_URL || 'http://localhost:3000', // use specified domain in production
+      ? ['http://localhost:3301', 'http://127.0.0.1:3301'] // allow local addresses in dev
+      : process.env.FRONTEND_URL || 'http://localhost:3301', // use specified domain in production
     credentials: true,
   });
 
-  const port = process.env.PORT || 3001;
+  const port = process.env.PORT || 3300;
   await app.listen(port);
   console.log(`Backend is running on: http://localhost:${port}`);
 }

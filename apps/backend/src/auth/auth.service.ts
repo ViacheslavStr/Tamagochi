@@ -21,6 +21,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
+    // User must have password to login
+    if (!user.passwordHash) {
+      throw new UnauthorizedException('User account does not have a password set');
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid email or password');

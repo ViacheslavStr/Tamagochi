@@ -67,7 +67,7 @@
     "hasAccount": "Already have an account?",
     "successTitle": "Registration successful!",
     "successText": "Thank you! Your account has been created. Redirecting to login...",
-    "errorValidation": "Please fill all fields. Age must be 18+, password at least 8 characters.",
+    "errorValidation": "Please enter email and password (at least 8 characters).",
     "errorServer": "Failed to connect to server. Make sure the backend is running."
   },
   "onboarding": {

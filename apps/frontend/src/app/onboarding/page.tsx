@@ -2,13 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getUser } from '@/lib/auth';
+import { getUser, getAccessToken } from '@/lib/auth';
 import { useTranslation } from '@/contexts/LocaleContext';
 import styles from './onboarding.module.css';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300';
 
 type QuestionnaireState = {
+  firstName: string;
+  lastName: string;
+  age: string;
+  role: 'mother' | 'father' | '';
   height: string;
   build: string;
   ethnicity: string;
@@ -40,6 +44,60 @@ function QuestionnaireForm({
 }) {
   return (
     <div className={styles.questionnaireForm}>
+      <div className={styles.fieldGroup}>
+        <label htmlFor="firstName">{t('register.firstName')}</label>
+        <input
+          id="firstName"
+          type="text"
+          value={questionnaire.firstName}
+          onChange={(e) => handleChange(setQuestionnaire, 'firstName', e.target.value)}
+          placeholder={t('register.firstNamePlaceholder')}
+          required
+        />
+      </div>
+      <div className={styles.fieldGroup}>
+        <label htmlFor="lastName">{t('register.lastName')}</label>
+        <input
+          id="lastName"
+          type="text"
+          value={questionnaire.lastName}
+          onChange={(e) => handleChange(setQuestionnaire, 'lastName', e.target.value)}
+          placeholder={t('register.lastNamePlaceholder')}
+          required
+        />
+      </div>
+      <div className={styles.fieldGroup}>
+        <label htmlFor="age">{t('register.age')}</label>
+        <input
+          id="age"
+          type="number"
+          min={18}
+          max={120}
+          value={questionnaire.age}
+          onChange={(e) => handleChange(setQuestionnaire, 'age', e.target.value)}
+          placeholder={t('register.agePlaceholder')}
+          required
+        />
+      </div>
+      <div className={styles.fieldGroup}>
+        <span className={styles.label}>{t('register.iAm')}</span>
+        <div className={styles.roleOptions}>
+          <button
+            type="button"
+            className={`${styles.roleBtn} ${questionnaire.role === 'mother' ? styles.active : ''}`}
+            onClick={() => handleChange(setQuestionnaire, 'role', 'mother')}
+          >
+            {t('register.mother')}
+          </button>
+          <button
+            type="button"
+            className={`${styles.roleBtn} ${questionnaire.role === 'father' ? styles.active : ''}`}
+            onClick={() => handleChange(setQuestionnaire, 'role', 'father')}
+          >
+            {t('register.father')}
+          </button>
+        </div>
+      </div>
       <div className={styles.fieldGroup}>
         <label htmlFor="height">{t('onboarding.height')}</label>
         <input
@@ -141,6 +199,10 @@ export default function OnboardingPage() {
   const [user, setUser] = useState<any>(null);
   const [mounted, setMounted] = useState(false);
   const initialQuestionnaire: QuestionnaireState = {
+    firstName: '',
+    lastName: '',
+    age: '',
+    role: '',
     height: '',
     build: '',
     ethnicity: '',
@@ -214,16 +276,143 @@ export default function OnboardingPage() {
     }));
   };
 
+  async function uploadFiles(files: File[], mediaType: 'photo' | 'video', userId?: string): Promise<void> {
+    if (files.length === 0) return;
+
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
+    formData.append('mediaType', mediaType);
+    if (userId) {
+      formData.append('userId', userId);
+    }
+
+    const token = getAccessToken();
+    const res = await fetch(`${API_URL}/profiles/media`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.message || 'Failed to upload files');
+    }
+  }
+
   async function handleSubmit() {
     setError(null);
     setLoading(true);
     try {
-      // TODO: Upload photos/videos and submit questionnaire
-      // For now, just simulate success
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Validate questionnaires
+      if (!questionnaire1.firstName || !questionnaire1.lastName || !questionnaire1.age || !questionnaire1.role) {
+        setError('Please fill all required fields in your questionnaire');
+        setLoading(false);
+        return;
+      }
+      if (!questionnaire2.firstName || !questionnaire2.lastName || !questionnaire2.age || !questionnaire2.role) {
+        setError('Please fill all required fields in partner questionnaire');
+        setLoading(false);
+        return;
+      }
+
+      const token = getAccessToken();
+      if (!token) {
+        throw new Error('Not authenticated');
+      }
+
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
+
+      // 1. Create profile for current user (parent 1)
+      const profile1Res = await fetch(`${API_URL}/profiles`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          firstName: questionnaire1.firstName,
+          lastName: questionnaire1.lastName,
+          age: parseInt(questionnaire1.age, 10),
+          role: questionnaire1.role as 'mother' | 'father',
+          height: questionnaire1.height || undefined,
+          build: questionnaire1.build || undefined,
+          ethnicity: questionnaire1.ethnicity || undefined,
+          education: questionnaire1.education || undefined,
+          interests: questionnaire1.interests,
+          openness: questionnaire1.openness,
+          conscientiousness: questionnaire1.conscientiousness,
+          extraversion: questionnaire1.extraversion,
+          agreeableness: questionnaire1.agreeableness,
+          neuroticism: questionnaire1.neuroticism,
+        }),
+      });
+
+      if (!profile1Res.ok) {
+        const data = await profile1Res.json().catch(() => ({}));
+        throw new Error(data.message || 'Failed to save your profile');
+      }
+
+      const profile1Data = await profile1Res.json();
+      const currentUserId = profile1Data.userId;
+
+      // 2. Upload media for current user
+      await uploadFiles(parent1Photos, 'photo');
+      await uploadFiles(parent1Videos, 'video');
+
+      // 3. Create partner user and profile (parent 2)
+      const partnerRes = await fetch(`${API_URL}/profiles/partner`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          firstName: questionnaire2.firstName,
+          lastName: questionnaire2.lastName,
+          age: parseInt(questionnaire2.age, 10),
+          role: questionnaire2.role as 'mother' | 'father',
+          height: questionnaire2.height || undefined,
+          build: questionnaire2.build || undefined,
+          ethnicity: questionnaire2.ethnicity || undefined,
+          education: questionnaire2.education || undefined,
+          interests: questionnaire2.interests,
+          openness: questionnaire2.openness,
+          conscientiousness: questionnaire2.conscientiousness,
+          extraversion: questionnaire2.extraversion,
+          agreeableness: questionnaire2.agreeableness,
+          neuroticism: questionnaire2.neuroticism,
+        }),
+      });
+
+      if (!partnerRes.ok) {
+        const data = await partnerRes.json().catch(() => ({}));
+        throw new Error(data.message || 'Failed to create partner profile');
+      }
+
+      const partnerData = await partnerRes.json();
+      const partnerUserId = partnerData.user?.id;
+
+      // 4. Upload media for partner
+      await uploadFiles(parent2Photos, 'photo', partnerUserId);
+      await uploadFiles(parent2Videos, 'video', partnerUserId);
+
+      // 5. Create family
+      const fatherId = questionnaire1.role === 'father' ? currentUserId : partnerUserId;
+      const motherId = questionnaire1.role === 'mother' ? currentUserId : partnerUserId;
+
+      const familyRes = await fetch(`${API_URL}/families`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ fatherId, motherId }),
+      });
+
+      if (!familyRes.ok) {
+        const data = await familyRes.json().catch(() => ({}));
+        throw new Error(data.message || 'Failed to create family');
+      }
+
       router.push('/dashboard');
-    } catch {
-      setError(t('onboarding.errorSubmit'));
+    } catch (err: any) {
+      setError(err.message || t('onboarding.errorSubmit'));
     } finally {
       setLoading(false);
     }
@@ -233,7 +422,7 @@ export default function OnboardingPage() {
     <div className={styles.onboardingPage}>
       <div className={styles.onboardingCard}>
         <header className={styles.header}>
-          <h1>{t('onboarding.welcome', { name: user?.firstName ?? '' })}</h1>
+          <h1>{t('onboarding.welcome', { name: user?.email?.split('@')[0] || 'User' })}</h1>
           <p>{t('onboarding.intro')}</p>
         </header>
 
@@ -258,12 +447,12 @@ export default function OnboardingPage() {
 
             <div className={styles.uploadSection}>
               <div className={styles.parentUpload}>
-                <h3>{user?.role === 'mother' ? t('onboarding.yourPhotosMother') : t('onboarding.partnerPhotosMother')}</h3>
+                <h3>{t('onboarding.yourPhotosMother')}</h3>
                 <input
                   type="file"
                   accept="image/*"
                   multiple
-                  onChange={(e) => handlePhotoUpload(e, user?.role === 'mother' ? 1 : 1)}
+                  onChange={(e) => handlePhotoUpload(e, 1)}
                 />
                 {parent1Photos.length > 0 && (
                   <p className={styles.fileCount}>{t('onboarding.photosSelected', { count: String(parent1Photos.length) })}</p>
@@ -272,7 +461,7 @@ export default function OnboardingPage() {
                   type="file"
                   accept="video/*"
                   multiple
-                  onChange={(e) => handleVideoUpload(e, user?.role === 'mother' ? 1 : 1)}
+                  onChange={(e) => handleVideoUpload(e, 1)}
                 />
                 {parent1Videos.length > 0 && (
                   <p className={styles.fileCount}>{t('onboarding.videosSelected', { count: String(parent1Videos.length) })}</p>
@@ -280,12 +469,12 @@ export default function OnboardingPage() {
               </div>
 
               <div className={styles.parentUpload}>
-                <h3>{user?.role === 'father' ? t('onboarding.yourPhotosFather') : t('onboarding.partnerPhotosFather')}</h3>
+                <h3>{t('onboarding.partnerPhotosFather')}</h3>
                 <input
                   type="file"
                   accept="image/*"
                   multiple
-                  onChange={(e) => handlePhotoUpload(e, user?.role === 'father' ? 2 : 2)}
+                  onChange={(e) => handlePhotoUpload(e, 2)}
                 />
                 {parent2Photos.length > 0 && (
                   <p className={styles.fileCount}>{t('onboarding.photosSelected', { count: String(parent2Photos.length) })}</p>
@@ -294,7 +483,7 @@ export default function OnboardingPage() {
                   type="file"
                   accept="video/*"
                   multiple
-                  onChange={(e) => handleVideoUpload(e, user?.role === 'father' ? 2 : 2)}
+                  onChange={(e) => handleVideoUpload(e, 2)}
                 />
                 {parent2Videos.length > 0 && (
                   <p className={styles.fileCount}>{t('onboarding.videosSelected', { count: String(parent2Videos.length) })}</p>

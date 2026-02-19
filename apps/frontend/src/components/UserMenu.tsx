@@ -31,7 +31,7 @@ export function UserMenu() {
   const { t } = useTranslation();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState<{ firstName: string } | null>(null);
+  const [user, setUser] = useState<{ email?: string } | null>(null);
   const [mounted, setMounted] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -77,7 +77,7 @@ export function UserMenu() {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="true"
-        aria-label={user.firstName}
+        aria-label={user.email || 'User menu'}
       >
         <UserIcon />
       </button>

@@ -7,17 +7,11 @@ import styles from './register.module.css';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300';
 
-type Role = 'mother' | 'father';
-
 export default function RegisterPage() {
   const router = useRouter();
   const { t } = useTranslation();
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [age, setAge] = useState('');
-  const [role, setRole] = useState<Role | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -25,8 +19,7 @@ export default function RegisterPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const ageNum = parseInt(age, 10);
-    if (!role || isNaN(ageNum) || ageNum < 18 || !email || password.length < 8) {
+    if (!email || password.length < 8) {
       setError(t('register.errorValidation'));
       return;
     }
@@ -36,12 +29,8 @@ export default function RegisterPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
           email: email.trim(),
           password,
-          age: ageNum,
-          role,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -81,34 +70,6 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className={styles.registerForm}>
           <div className={styles.fieldGroup}>
-            <label htmlFor="firstName">{t('register.firstName')}</label>
-            <input
-              id="firstName"
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              placeholder={t('register.firstNamePlaceholder')}
-              autoComplete="given-name"
-              disabled={loading}
-              required
-            />
-          </div>
-
-          <div className={styles.fieldGroup}>
-            <label htmlFor="lastName">{t('register.lastName')}</label>
-            <input
-              id="lastName"
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              placeholder={t('register.lastNamePlaceholder')}
-              autoComplete="family-name"
-              disabled={loading}
-              required
-            />
-          </div>
-
-          <div className={styles.fieldGroup}>
             <label htmlFor="email">{t('register.email')}</label>
             <input
               id="email"
@@ -135,43 +96,6 @@ export default function RegisterPage() {
               minLength={8}
               required
             />
-          </div>
-
-          <div className={styles.fieldGroup}>
-            <label htmlFor="age">{t('register.age')}</label>
-            <input
-              id="age"
-              type="number"
-              min={18}
-              max={120}
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              placeholder={t('register.agePlaceholder')}
-              disabled={loading}
-              required
-            />
-          </div>
-
-          <div className={styles.fieldGroup}>
-            <span className={styles.label}>{t('register.iAm')}</span>
-            <div className={styles.roleOptions}>
-              <button
-                type="button"
-                className={`${styles.roleBtn} ${role === 'mother' ? styles.active : ''}`}
-                onClick={() => setRole('mother')}
-                disabled={loading}
-              >
-                {t('register.mother')}
-              </button>
-              <button
-                type="button"
-                className={`${styles.roleBtn} ${role === 'father' ? styles.active : ''}`}
-                onClick={() => setRole('father')}
-                disabled={loading}
-              >
-                {t('register.father')}
-              </button>
-            </div>
           </div>
 
           {error && <p className={styles.formError}>{error}</p>}
