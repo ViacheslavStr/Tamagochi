@@ -1,0 +1,26 @@
+.switcher {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.btn {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: inherit;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.btn:hover {
+  opacity: 1;
+}
+
+.btn.active {
+  font-weight: 700;
+  border-width: 2px;
+  opacity: 1;
+}

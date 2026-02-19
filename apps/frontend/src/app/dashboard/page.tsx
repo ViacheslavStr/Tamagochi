@@ -2,13 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getUser, clearAuthData } from '@/lib/auth';
+import { getUser, logout } from '@/lib/auth';
+import { useTranslation } from '@/contexts/LocaleContext';
 import styles from './dashboard.module.css';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { t } = useTranslation();
+  const [user, setUser] = useState<{ firstName: string } | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -20,9 +23,14 @@ export default function DashboardPage() {
     setUser(currentUser);
   }, [router]);
 
-  function handleLogout() {
-    clearAuthData();
-    router.push('/login');
+  async function handleLogout() {
+    setLoggingOut(true);
+    try {
+      await logout();
+      router.push('/login');
+    } finally {
+      setLoggingOut(false);
+    }
   }
 
   if (!mounted || !user) {
@@ -33,12 +41,12 @@ export default function DashboardPage() {
     <div className={styles.dashboardPage}>
       <div className={styles.dashboardCard}>
         <header className={styles.header}>
-          <h1>Welcome, {user.firstName}!</h1>
-          <button onClick={handleLogout} className={styles.logoutBtn}>
-            Logout
+          <h1>{t('dashboard.welcome', { name: user.firstName })}</h1>
+          <button onClick={handleLogout} className={styles.logoutBtn} disabled={loggingOut}>
+            {loggingOut ? t('dashboard.loggingOut') : t('common.logout')}
           </button>
         </header>
-        <p>Your dashboard is coming soon. Here you'll see your electronic child once it's created.</p>
+        <p>{t('dashboard.comingSoon')}</p>
       </div>
     </div>
   );

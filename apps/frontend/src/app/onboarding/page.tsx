@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getUser } from '@/lib/auth';
+import { useTranslation } from '@/contexts/LocaleContext';
 import styles from './onboarding.module.css';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300';
@@ -20,96 +21,100 @@ type QuestionnaireState = {
   neuroticism: number;
 };
 
+type TFunction = (key: string, vars?: Record<string, string>) => string;
+
+const INTEREST_KEYS = ['Music', 'Sports', 'Reading', 'Art', 'Science', 'Technology', 'Travel', 'Cooking', 'Gaming', 'Nature'];
+
 function QuestionnaireForm({
   questionnaire,
   setQuestionnaire,
   handleChange,
   handleInterestsToggle,
+  t,
 }: {
   questionnaire: QuestionnaireState;
   setQuestionnaire: React.Dispatch<React.SetStateAction<QuestionnaireState>>;
   handleChange: (setter: React.Dispatch<React.SetStateAction<QuestionnaireState>>, field: string, value: unknown) => void;
   handleInterestsToggle: (setter: React.Dispatch<React.SetStateAction<QuestionnaireState>>, interest: string) => void;
+  t: TFunction;
 }) {
   return (
     <div className={styles.questionnaireForm}>
       <div className={styles.fieldGroup}>
-        <label htmlFor="height">Height (optional)</label>
+        <label htmlFor="height">{t('onboarding.height')}</label>
         <input
           id="height"
           type="text"
           value={questionnaire.height}
           onChange={(e) => handleChange(setQuestionnaire, 'height', e.target.value)}
-          placeholder="e.g., 175 cm"
+          placeholder={t('onboarding.heightPlaceholder')}
         />
       </div>
       <div className={styles.fieldGroup}>
-        <label htmlFor="build">Build (optional)</label>
+        <label htmlFor="build">{t('onboarding.build')}</label>
         <select
           id="build"
           value={questionnaire.build}
           onChange={(e) => handleChange(setQuestionnaire, 'build', e.target.value)}
         >
-          <option value="">Select...</option>
-          <option value="slim">Slim</option>
-          <option value="average">Average</option>
-          <option value="athletic">Athletic</option>
-          <option value="stocky">Stocky</option>
+          <option value="">{t('common.select')}</option>
+          <option value="slim">{t('onboarding.buildSlim')}</option>
+          <option value="average">{t('onboarding.buildAverage')}</option>
+          <option value="athletic">{t('onboarding.buildAthletic')}</option>
+          <option value="stocky">{t('onboarding.buildStocky')}</option>
         </select>
       </div>
       <div className={styles.fieldGroup}>
-        <label htmlFor="ethnicity">Ethnicity (optional)</label>
+        <label htmlFor="ethnicity">{t('onboarding.ethnicity')}</label>
         <input
           id="ethnicity"
           type="text"
           value={questionnaire.ethnicity}
           onChange={(e) => handleChange(setQuestionnaire, 'ethnicity', e.target.value)}
-          placeholder="e.g., European, Asian, etc."
+          placeholder={t('onboarding.ethnicityPlaceholder')}
         />
       </div>
       <div className={styles.fieldGroup}>
-        <label htmlFor="education">Education Level (optional)</label>
+        <label htmlFor="education">{t('onboarding.education')}</label>
         <select
           id="education"
           value={questionnaire.education}
           onChange={(e) => handleChange(setQuestionnaire, 'education', e.target.value)}
         >
-          <option value="">Select...</option>
-          <option value="high-school">High School</option>
-          <option value="bachelor">Bachelor&apos;s Degree</option>
-          <option value="master">Master&apos;s Degree</option>
-          <option value="phd">PhD</option>
+          <option value="">{t('common.select')}</option>
+          <option value="high-school">{t('onboarding.educationHighSchool')}</option>
+          <option value="bachelor">{t('onboarding.educationBachelor')}</option>
+          <option value="master">{t('onboarding.educationMaster')}</option>
+          <option value="phd">{t('onboarding.educationPhd')}</option>
         </select>
       </div>
       <div className={styles.fieldGroup}>
-        <label>Interests (select multiple)</label>
+        <label>{t('onboarding.interests')}</label>
         <div className={styles.interestsGrid}>
-          {['Music', 'Sports', 'Reading', 'Art', 'Science', 'Technology', 'Travel', 'Cooking', 'Gaming', 'Nature'].map(
-            (interest) => (
-              <button
-                key={interest}
-                type="button"
-                className={`${styles.interestBtn} ${questionnaire.interests.includes(interest) ? styles.selected : ''}`}
-                onClick={() => handleInterestsToggle(setQuestionnaire, interest)}
-              >
-                {interest}
-              </button>
-            ),
-          )}
+          {INTEREST_KEYS.map((interest) => (
+            <button
+              key={interest}
+              type="button"
+              className={`${styles.interestBtn} ${questionnaire.interests.includes(interest) ? styles.selected : ''}`}
+              onClick={() => handleInterestsToggle(setQuestionnaire, interest)}
+            >
+              {t(`onboarding.interest${interest}`)}
+            </button>
+          ))}
         </div>
       </div>
       <div className={styles.personalitySection}>
-        <h3>Big Five Personality Traits</h3>
-        <p className={styles.traitDescription}>Rate 1–10 for this parent</p>
+        <h3>{t('onboarding.bigFive')}</h3>
+        <p className={styles.traitDescription}>{t('onboarding.traitDescription')}</p>
         {[
-          { key: 'openness', label: 'Openness to Experience' },
-          { key: 'conscientiousness', label: 'Conscientiousness' },
-          { key: 'extraversion', label: 'Extraversion' },
-          { key: 'agreeableness', label: 'Agreeableness' },
-          { key: 'neuroticism', label: 'Neuroticism' },
+          { key: 'openness', labelKey: 'onboarding.openness' },
+          { key: 'conscientiousness', labelKey: 'onboarding.conscientiousness' },
+          { key: 'extraversion', labelKey: 'onboarding.extraversion' },
+          { key: 'agreeableness', labelKey: 'onboarding.agreeableness' },
+          { key: 'neuroticism', labelKey: 'onboarding.neuroticism' },
         ].map((trait) => (
           <div key={trait.key} className={styles.traitSlider}>
-            <label>{trait.label}</label>
+            <label>{t(trait.labelKey)}</label>
             <div className={styles.sliderContainer}>
               <input
                 type="range"
@@ -132,6 +137,7 @@ function QuestionnaireForm({
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [user, setUser] = useState<any>(null);
   const [mounted, setMounted] = useState(false);
   const initialQuestionnaire: QuestionnaireState = {
@@ -217,7 +223,7 @@ export default function OnboardingPage() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       router.push('/dashboard');
     } catch {
-      setError('Failed to save data. Please try again.');
+      setError(t('onboarding.errorSubmit'));
     } finally {
       setLoading(false);
     }
@@ -227,32 +233,32 @@ export default function OnboardingPage() {
     <div className={styles.onboardingPage}>
       <div className={styles.onboardingCard}>
         <header className={styles.header}>
-          <h1>Welcome, {user?.firstName}!</h1>
-          <p>Let's create your electronic child. We need a few things from you.</p>
+          <h1>{t('onboarding.welcome', { name: user?.firstName ?? '' })}</h1>
+          <p>{t('onboarding.intro')}</p>
         </header>
 
         <div className={styles.steps}>
           <div className={`${styles.stepIndicator} ${step === 'photos' ? styles.active : ''}`}>
-            <span>1</span> Photos & Videos
+            <span>1</span> {t('onboarding.step1')}
           </div>
           <div className={`${styles.stepIndicator} ${step === 'questionnaire1' ? styles.active : ''}`}>
-            <span>2</span> Your Questionnaire
+            <span>2</span> {t('onboarding.step2')}
           </div>
           <div className={`${styles.stepIndicator} ${step === 'questionnaire2' ? styles.active : ''}`}>
-            <span>3</span> Partner&apos;s Questionnaire
+            <span>3</span> {t('onboarding.step3')}
           </div>
         </div>
 
         {step === 'photos' && (
           <div className={styles.stepContent}>
-            <h2>Upload Photos & Videos</h2>
+            <h2>{t('onboarding.uploadTitle')}</h2>
             <p className={styles.stepDescription}>
-              Upload several photos (and optionally videos) of both parents. This helps AI generate your child's appearance.
+              {t('onboarding.uploadDesc')}
             </p>
 
             <div className={styles.uploadSection}>
               <div className={styles.parentUpload}>
-                <h3>{user?.role === 'mother' ? 'Your Photos (Mother)' : 'Partner Photos (Mother)'}</h3>
+                <h3>{user?.role === 'mother' ? t('onboarding.yourPhotosMother') : t('onboarding.partnerPhotosMother')}</h3>
                 <input
                   type="file"
                   accept="image/*"
@@ -260,7 +266,7 @@ export default function OnboardingPage() {
                   onChange={(e) => handlePhotoUpload(e, user?.role === 'mother' ? 1 : 1)}
                 />
                 {parent1Photos.length > 0 && (
-                  <p className={styles.fileCount}>{parent1Photos.length} photo(s) selected</p>
+                  <p className={styles.fileCount}>{t('onboarding.photosSelected', { count: String(parent1Photos.length) })}</p>
                 )}
                 <input
                   type="file"
@@ -269,12 +275,12 @@ export default function OnboardingPage() {
                   onChange={(e) => handleVideoUpload(e, user?.role === 'mother' ? 1 : 1)}
                 />
                 {parent1Videos.length > 0 && (
-                  <p className={styles.fileCount}>{parent1Videos.length} video(s) selected</p>
+                  <p className={styles.fileCount}>{t('onboarding.videosSelected', { count: String(parent1Videos.length) })}</p>
                 )}
               </div>
 
               <div className={styles.parentUpload}>
-                <h3>{user?.role === 'father' ? 'Your Photos (Father)' : 'Partner Photos (Father)'}</h3>
+                <h3>{user?.role === 'father' ? t('onboarding.yourPhotosFather') : t('onboarding.partnerPhotosFather')}</h3>
                 <input
                   type="file"
                   accept="image/*"
@@ -282,7 +288,7 @@ export default function OnboardingPage() {
                   onChange={(e) => handlePhotoUpload(e, user?.role === 'father' ? 2 : 2)}
                 />
                 {parent2Photos.length > 0 && (
-                  <p className={styles.fileCount}>{parent2Photos.length} photo(s) selected</p>
+                  <p className={styles.fileCount}>{t('onboarding.photosSelected', { count: String(parent2Photos.length) })}</p>
                 )}
                 <input
                   type="file"
@@ -291,7 +297,7 @@ export default function OnboardingPage() {
                   onChange={(e) => handleVideoUpload(e, user?.role === 'father' ? 2 : 2)}
                 />
                 {parent2Videos.length > 0 && (
-                  <p className={styles.fileCount}>{parent2Videos.length} video(s) selected</p>
+                  <p className={styles.fileCount}>{t('onboarding.videosSelected', { count: String(parent2Videos.length) })}</p>
                 )}
               </div>
             </div>
@@ -301,30 +307,31 @@ export default function OnboardingPage() {
               onClick={() => setStep('questionnaire1')}
               disabled={parent1Photos.length === 0 || parent2Photos.length === 0}
             >
-              Continue to Your Questionnaire →
+              {t('onboarding.continueToQuestionnaire')}
             </button>
           </div>
         )}
 
         {step === 'questionnaire1' && (
           <div className={styles.stepContent}>
-            <h2>Your Personality & Traits</h2>
+            <h2>{t('onboarding.yourTraitsTitle')}</h2>
             <p className={styles.stepDescription}>
-              Tell us about yourself (parent 1). This helps determine your child&apos;s base personality.
+              {t('onboarding.yourTraitsDesc')}
             </p>
             <QuestionnaireForm
               questionnaire={questionnaire1}
               setQuestionnaire={setQuestionnaire1}
               handleChange={handleQuestionnaireChange}
               handleInterestsToggle={handleInterestsToggle}
+              t={t}
             />
             {error && <p className={styles.formError}>{error}</p>}
             <div className={styles.actions}>
               <button className={styles.backBtn} onClick={() => setStep('photos')}>
-                ← Back
+                ← {t('common.back')}
               </button>
               <button className={styles.nextBtn} onClick={() => setStep('questionnaire2')}>
-                Continue to Partner&apos;s Questionnaire →
+                {t('onboarding.continueToPartner')}
               </button>
             </div>
           </div>
@@ -332,23 +339,24 @@ export default function OnboardingPage() {
 
         {step === 'questionnaire2' && (
           <div className={styles.stepContent}>
-            <h2>Partner&apos;s Personality & Traits</h2>
+            <h2>{t('onboarding.partnerTraitsTitle')}</h2>
             <p className={styles.stepDescription}>
-              Tell us about the second parent (partner, friend, or celebrity). Use defaults if you prefer.
+              {t('onboarding.partnerTraitsDesc')}
             </p>
             <QuestionnaireForm
               questionnaire={questionnaire2}
               setQuestionnaire={setQuestionnaire2}
               handleChange={handleQuestionnaireChange}
               handleInterestsToggle={handleInterestsToggle}
+              t={t}
             />
             {error && <p className={styles.formError}>{error}</p>}
             <div className={styles.actions}>
               <button className={styles.backBtn} onClick={() => setStep('questionnaire1')}>
-                ← Back
+                ← {t('common.back')}
               </button>
               <button className={styles.submitBtn} onClick={handleSubmit} disabled={loading}>
-                {loading ? 'Creating...' : 'Complete Setup'}
+                {loading ? t('onboarding.creating') : t('onboarding.completeSetup')}
               </button>
             </div>
           </div>

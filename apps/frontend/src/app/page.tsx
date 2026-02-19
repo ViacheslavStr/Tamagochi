@@ -1,72 +1,75 @@
+'use client';
+
 import Link from 'next/link';
+import { useTranslation } from '@/contexts/LocaleContext';
 import styles from './home.module.css';
 
 export default function Home() {
+  const { t } = useTranslation();
+
   return (
     <div className={styles.homePage}>
       <header className={styles.hero}>
-        <h1 className={styles.title}>Tamagochi</h1>
-        <p className={styles.subtitle}>Your Electronic Child</p>
-        <p className={styles.description}>
-          Experience parenthood simulation: upload photos (yours and your partner’s, or even a celebrity or friend’s), fill out a questionnaire for each parent, and watch your AI-generated child grow, learn, and interact with you.
-        </p>
+        <h1 className={styles.title}>{t('home.title')}</h1>
+        <p className={styles.subtitle}>{t('home.subtitle')}</p>
+        <p className={styles.description}>{t('home.description')}</p>
         <div className={styles.cta}>
           <Link href="/register" className={styles.primaryBtn}>
-            Get Started
+            {t('common.getStarted')}
           </Link>
           <Link href="/login" className={styles.secondaryBtn}>
-            Log In
+            {t('common.logIn')}
           </Link>
         </div>
       </header>
 
       <section className={styles.howItWorks}>
-        <h2>How It Works</h2>
+        <h2>{t('home.howItWorks')}</h2>
         <div className={styles.steps}>
           <div className={styles.step}>
             <div className={styles.stepNumber}>1</div>
-            <h3>Register & Upload</h3>
-            <p>Create your account and upload photos/videos of both “parents” — you and your partner, or you and a celebrity/friend to see what your child would look like. Fill out a short questionnaire for each parent (traits and characteristics).</p>
+            <h3>{t('home.step1Title')}</h3>
+            <p>{t('home.step1Text')}</p>
           </div>
           <div className={styles.step}>
             <div className={styles.stepNumber}>2</div>
-            <h3>AI Generation</h3>
-            <p>Our AI creates a model of your future child — combining facial features and personality traits from both parents' questionnaires.</p>
+            <h3>{t('home.step2Title')}</h3>
+            <p>{t('home.step2Text')}</p>
           </div>
           <div className={styles.step}>
             <div className={styles.stepNumber}>3</div>
-            <h3>Watch Them Grow</h3>
-            <p>Your child lives in the app: they grow, develop, communicate, and express emotions based on their age, personality, and what you teach them.</p>
+            <h3>{t('home.step3Title')}</h3>
+            <p>{t('home.step3Text')}</p>
           </div>
         </div>
       </section>
 
       <section className={styles.features}>
-        <h2>Features</h2>
+        <h2>{t('home.features')}</h2>
         <div className={styles.featureGrid}>
           <div className={styles.feature}>
-            <h3>Realistic Appearance</h3>
-            <p>AI-generated child face combining features from both parents, with age progression over time.</p>
+            <h3>{t('home.feature1Title')}</h3>
+            <p>{t('home.feature1Text')}</p>
           </div>
           <div className={styles.feature}>
-            <h3>Dynamic Personality</h3>
-            <p>Your child's personality develops based on parent traits and interactions, expressed through emotions and behavior.</p>
+            <h3>{t('home.feature2Title')}</h3>
+            <p>{t('home.feature2Text')}</p>
           </div>
           <div className={styles.feature}>
-            <h3>Interactive Communication</h3>
-            <p>Chat with your child using AI. Their responses adapt to their age, personality, and what they've learned from you.</p>
+            <h3>{t('home.feature3Title')}</h3>
+            <p>{t('home.feature3Text')}</p>
           </div>
           <div className={styles.feature}>
-            <h3>Growth & Development</h3>
-            <p>Watch your child progress through different life stages, learning new words and skills as you teach them.</p>
+            <h3>{t('home.feature4Title')}</h3>
+            <p>{t('home.feature4Text')}</p>
           </div>
         </div>
       </section>
 
       <footer className={styles.footer}>
-        <p>Ready to start your journey?</p>
+        <p>{t('home.footerText')}</p>
         <Link href="/register" className={styles.footerBtn}>
-          Register Now
+          {t('home.registerNow')}
         </Link>
       </footer>
     </div>

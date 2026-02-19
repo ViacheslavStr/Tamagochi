@@ -34,6 +34,24 @@ export function clearAuthData() {
   localStorage.removeItem(USER_KEY);
 }
 
+/** Logout: invalidate refresh token on server (if any), then clear local auth data. */
+export async function logout(): Promise<void> {
+  const refreshToken = getRefreshToken();
+  const apiUrl = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_API_URL : undefined;
+  if (refreshToken && apiUrl) {
+    try {
+      await fetch(`${apiUrl}/auth/logout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      });
+    } catch {
+      // Ignore network errors; we still clear local state
+    }
+  }
+  clearAuthData();
+}
+
 export function isAuthenticated(): boolean {
   return !!getAccessToken();
 }

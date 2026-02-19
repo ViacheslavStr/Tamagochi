@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from '@/contexts/LocaleContext';
 import styles from './register.module.css';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300';
@@ -10,6 +11,7 @@ type Role = 'mother' | 'father';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -25,7 +27,7 @@ export default function RegisterPage() {
     setError(null);
     const ageNum = parseInt(age, 10);
     if (!role || isNaN(ageNum) || ageNum < 18 || !email || password.length < 8) {
-      setError('Please fill all fields. Age must be 18+, password at least 8 characters.');
+      setError(t('register.errorValidation'));
       return;
     }
     setLoading(true);
@@ -44,14 +46,14 @@ export default function RegisterPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const message = Array.isArray(data.message) ? data.message.join(', ') : data.message || 'Registration failed';
+        const message = Array.isArray(data.message) ? data.message.join(', ') : data.message || t('register.errorValidation');
         setError(message);
         return;
       }
       setSuccess(true);
       setTimeout(() => router.push('/login'), 2000);
     } catch {
-      setError('Failed to connect to server. Make sure the backend is running.');
+      setError(t('register.errorServer'));
     } finally {
       setLoading(false);
     }
@@ -62,8 +64,8 @@ export default function RegisterPage() {
       <div className={styles.registerPage}>
         <div className={styles.successCard}>
           <div className={styles.successIcon}>✓</div>
-          <h2>Registration successful!</h2>
-          <p>Thank you! Your account has been created. Redirecting to login...</p>
+          <h2>{t('register.successTitle')}</h2>
+          <p>{t('register.successText')}</p>
         </div>
       </div>
     );
@@ -73,19 +75,19 @@ export default function RegisterPage() {
     <div className={styles.registerPage}>
       <div className={styles.registerCard}>
         <header className={styles.registerHeader}>
-          <h1>Parent Registration</h1>
-          <p>Tell us about yourself — this will help create your electronic child</p>
+          <h1>{t('register.title')}</h1>
+          <p>{t('register.subtitle')}</p>
         </header>
 
         <form onSubmit={handleSubmit} className={styles.registerForm}>
           <div className={styles.fieldGroup}>
-            <label htmlFor="firstName">First Name</label>
+            <label htmlFor="firstName">{t('register.firstName')}</label>
             <input
               id="firstName"
               type="text"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              placeholder="e.g., Anna"
+              placeholder={t('register.firstNamePlaceholder')}
               autoComplete="given-name"
               disabled={loading}
               required
@@ -93,13 +95,13 @@ export default function RegisterPage() {
           </div>
 
           <div className={styles.fieldGroup}>
-            <label htmlFor="lastName">Last Name</label>
+            <label htmlFor="lastName">{t('register.lastName')}</label>
             <input
               id="lastName"
               type="text"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              placeholder="e.g., Smith"
+              placeholder={t('register.lastNamePlaceholder')}
               autoComplete="family-name"
               disabled={loading}
               required
@@ -107,13 +109,13 @@ export default function RegisterPage() {
           </div>
 
           <div className={styles.fieldGroup}>
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">{t('register.email')}</label>
             <input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="anna@example.com"
+              placeholder={t('register.emailPlaceholder')}
               autoComplete="email"
               disabled={loading}
               required
@@ -121,13 +123,13 @@ export default function RegisterPage() {
           </div>
 
           <div className={styles.fieldGroup}>
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">{t('register.password')}</label>
             <input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 8 characters"
+              placeholder={t('register.passwordPlaceholder')}
               autoComplete="new-password"
               disabled={loading}
               minLength={8}
@@ -136,7 +138,7 @@ export default function RegisterPage() {
           </div>
 
           <div className={styles.fieldGroup}>
-            <label htmlFor="age">Age</label>
+            <label htmlFor="age">{t('register.age')}</label>
             <input
               id="age"
               type="number"
@@ -144,14 +146,14 @@ export default function RegisterPage() {
               max={120}
               value={age}
               onChange={(e) => setAge(e.target.value)}
-              placeholder="25"
+              placeholder={t('register.agePlaceholder')}
               disabled={loading}
               required
             />
           </div>
 
           <div className={styles.fieldGroup}>
-            <span className={styles.label}>I am —</span>
+            <span className={styles.label}>{t('register.iAm')}</span>
             <div className={styles.roleOptions}>
               <button
                 type="button"
@@ -159,7 +161,7 @@ export default function RegisterPage() {
                 onClick={() => setRole('mother')}
                 disabled={loading}
               >
-                Mother
+                {t('register.mother')}
               </button>
               <button
                 type="button"
@@ -167,7 +169,7 @@ export default function RegisterPage() {
                 onClick={() => setRole('father')}
                 disabled={loading}
               >
-                Father
+                {t('register.father')}
               </button>
             </div>
           </div>
@@ -175,11 +177,11 @@ export default function RegisterPage() {
           {error && <p className={styles.formError}>{error}</p>}
 
           <button type="submit" className={styles.submitBtn} disabled={loading}>
-            {loading ? 'Registering...' : 'Continue'}
+            {loading ? t('register.submitting') : t('register.submit')}
           </button>
 
           <p className={styles.loginLink}>
-            Already have an account? <a href="/login">Log in</a>
+            {t('register.hasAccount')} <a href="/login">{t('common.logIn')}</a>
           </p>
         </form>
       </div>

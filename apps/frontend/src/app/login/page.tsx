@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { saveAuthData } from '@/lib/auth';
+import { useTranslation } from '@/contexts/LocaleContext';
 import styles from './login.module.css';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,7 +20,7 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     if (!email || !password) {
-      setError('Please enter email and password');
+      setError(t('login.errorRequired'));
       return;
     }
     setLoading(true);
@@ -30,16 +32,14 @@ export default function LoginPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const message = data.message || 'Invalid email or password';
+        const message = data.message || t('login.errorInvalid');
         setError(message);
         return;
       }
-      // Save tokens and user data
       saveAuthData(data.accessToken, data.refreshToken, data.user);
-      // Redirect to onboarding
       router.push('/onboarding');
     } catch {
-      setError('Failed to connect to server. Make sure the backend is running.');
+      setError(t('login.errorServer'));
     } finally {
       setLoading(false);
     }
@@ -49,19 +49,19 @@ export default function LoginPage() {
     <div className={styles.loginPage}>
       <div className={styles.loginCard}>
         <header className={styles.loginHeader}>
-          <h1>Login</h1>
-          <p>Welcome back! Sign in to your account</p>
+          <h1>{t('login.title')}</h1>
+          <p>{t('login.subtitle')}</p>
         </header>
 
         <form onSubmit={handleSubmit} className={styles.loginForm}>
           <div className={styles.fieldGroup}>
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">{t('login.email')}</label>
             <input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="anna@example.com"
+              placeholder={t('login.emailPlaceholder')}
               autoComplete="email"
               disabled={loading}
               required
@@ -69,13 +69,13 @@ export default function LoginPage() {
           </div>
 
           <div className={styles.fieldGroup}>
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">{t('login.password')}</label>
             <input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
+              placeholder={t('login.passwordPlaceholder')}
               autoComplete="current-password"
               disabled={loading}
               required
@@ -85,11 +85,11 @@ export default function LoginPage() {
           {error && <p className={styles.formError}>{error}</p>}
 
           <button type="submit" className={styles.submitBtn} disabled={loading}>
-            {loading ? 'Logging in...' : 'Log in'}
+            {loading ? t('login.submitting') : t('login.submit')}
           </button>
 
           <p className={styles.registerLink}>
-            Don't have an account? <a href="/register">Register</a>
+            {t('login.noAccount')} <a href="/register">{t('common.register')}</a>
           </p>
         </form>
       </div>
