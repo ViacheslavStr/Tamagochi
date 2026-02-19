@@ -50,4 +50,19 @@ export class UsersService {
     const [user] = await this.db.select().from(users).where(eq(users.id, id)).limit(1);
     return user || null;
   }
+
+  async markAsOnboarded(userId: string) {
+    const [updated] = await this.db
+      .update(users)
+      .set({ status: 'onboarded', updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+
+    if (!updated) {
+      throw new Error('User not found');
+    }
+
+    const { passwordHash: _, ...userWithoutPassword } = updated;
+    return userWithoutPassword;
+  }
 }

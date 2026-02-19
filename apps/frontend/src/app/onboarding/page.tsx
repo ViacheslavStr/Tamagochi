@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getUser, getAccessToken } from '@/lib/auth';
+import { getUser, getAccessToken, getRefreshToken, saveAuthData } from '@/lib/auth';
 import { useTranslation } from '@/contexts/LocaleContext';
 import styles from './onboarding.module.css';
 
@@ -408,6 +408,24 @@ export default function OnboardingPage() {
       if (!familyRes.ok) {
         const data = await familyRes.json().catch(() => ({}));
         throw new Error(data.message || 'Failed to create family');
+      }
+
+      // Mark user as onboarded
+      const onboardedRes = await fetch(`${API_URL}/users/onboarded`, {
+        method: 'PUT',
+        headers,
+      });
+
+      if (!onboardedRes.ok) {
+        // Log error but don't fail - onboarding is complete even if status update fails
+        console.error('Failed to update user status');
+      } else {
+        // Update user in localStorage
+        const updatedUser = await onboardedRes.json();
+        const currentUser = getUser();
+        if (currentUser) {
+          saveAuthData(getAccessToken() || '', getRefreshToken() || '', updatedUser);
+        }
       }
 
       router.push('/dashboard');

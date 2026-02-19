@@ -37,7 +37,12 @@ export default function LoginPage() {
         return;
       }
       saveAuthData(data.accessToken, data.refreshToken, data.user);
-      router.push('/onboarding');
+      // Redirect based on user status
+      if (data.user?.status === 'onboarded') {
+        router.push('/dashboard');
+      } else {
+        router.push('/onboarding');
+      }
     } catch {
       setError(t('login.errorServer'));
     } finally {

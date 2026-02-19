@@ -6,12 +6,16 @@ export const userRoleEnum = pgEnum('user_role', ['mother', 'father', 'brother', 
 // User media type
 export const userMediaTypeEnum = pgEnum('user_media_type', ['photo', 'video']);
 
+// User status enum
+export const userStatusEnum = pgEnum('user_status', ['new', 'onboarded']);
+
 // Users table
 // Only email and password for registration. Personal data (firstName, lastName, age, role) goes to user_profiles
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   email: text('email').unique(), // nullable: partner may not have email
   passwordHash: text('password_hash'), // nullable: partner created from questionnaire doesn't need password
+  status: userStatusEnum('status').default('new').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });

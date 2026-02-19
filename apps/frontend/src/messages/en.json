@@ -129,6 +129,12 @@
   "dashboard": {
     "welcome": "Welcome, {name}!",
     "comingSoon": "Your dashboard is coming soon. Here you'll see your electronic child once it's created.",
-    "loggingOut": "Logging out..."
+    "loggingOut": "Logging out...",
+    "yourChild": "Your child",
+    "generateChild": "Generate child",
+    "generating": "Generating...",
+    "generateAgain": "Generate another",
+    "errorGenerate": "Failed to generate child. Check that you have a family and photos for both parents.",
+    "errorAuth": "Please log in again."
   }
 }
