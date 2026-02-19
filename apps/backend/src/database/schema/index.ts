@@ -81,3 +81,32 @@ export const families = pgTable('families', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
+
+// --- Children ---
+// Generated children for a family
+export const children = pgTable('children', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  familyId: uuid('family_id')
+    .notNull()
+    .references(() => families.id, { onDelete: 'cascade' }),
+  name: text('name'), // Optional: can be "Child 1", "Child 2", or custom name
+  generatedAt: timestamp('generated_at', { withTimezone: true }).defaultNow().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+// --- Child media (photos/videos) ---
+// Photos/videos for generated children
+export const childMedia = pgTable('child_media', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  childId: uuid('child_id')
+    .notNull()
+    .references(() => children.id, { onDelete: 'cascade' }),
+  filePath: text('file_path').notNull(), // path in storage or URL
+  mediaType: userMediaTypeEnum('media_type').notNull(), // Reuse same enum
+  ageVariant: text('age_variant'), // NULL for base photo, "0-1", "1-3", "3-7", etc. for age progression
+  generationPrompt: text('generation_prompt'), // Prompt used for generation
+  metadata: jsonb('metadata').$type<Record<string, unknown>>(), // { model, replicate_run_id, etc }
+  sortOrder: integer('sort_order').default(0).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+});

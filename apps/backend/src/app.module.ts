@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import { ProfilesModule } from './profiles/profiles.module';
+import { GenerationModule } from './generation/generation.module';
+import { ChildrenModule } from './children/children.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { ProfilesModule } from './profiles/profiles.module';
     UsersModule,
     AuthModule,
     ProfilesModule,
+    GenerationModule,
+    ChildrenModule,
   ],
   controllers: [AppController],
   providers: [AppService],

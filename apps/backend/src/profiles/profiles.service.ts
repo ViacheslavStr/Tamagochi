@@ -1,5 +1,5 @@
 import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, or, and } from 'drizzle-orm';
 import { DRIZZLE, DrizzleDB } from '../database';
 import { userProfiles, userMedia, users, families } from '../database/schema';
 import { CreateProfileDto } from './dto/create-profile.dto';
@@ -149,5 +149,27 @@ export class ProfilesService {
       .returning();
 
     return family;
+  }
+
+  async findFamilyByUserId(userId: string) {
+    // Find family where user is either father or mother
+    const [family] = await this.db
+      .select()
+      .from(families)
+      .where(or(eq(families.fatherId, userId), eq(families.motherId, userId)))
+      .limit(1);
+
+    return family || null;
+  }
+
+  async findFamilyByParents(fatherId: string, motherId: string) {
+    // Find family by both father and mother IDs
+    const [family] = await this.db
+      .select()
+      .from(families)
+      .where(and(eq(families.fatherId, fatherId), eq(families.motherId, motherId)))
+      .limit(1);
+
+    return family || null;
   }
 }

@@ -50,6 +50,13 @@
       "when": 1771515333081,
       "tag": "0006_demonic_colleen_wing",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1771517375951,
+      "tag": "0007_freezing_gravity",
+      "breakpoints": true
     }
   ]
 }
