@@ -1,0 +1,34 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1771429646269,
+      "tag": "0000_free_salo",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1771431807288,
+      "tag": "0001_magical_mephisto",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1771432474805,
+      "tag": "0002_heavy_squirrel_girl",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1771487225309,
+      "tag": "0003_tiresome_thunderbolts",
+      "breakpoints": true
+    }
+  ]
+}

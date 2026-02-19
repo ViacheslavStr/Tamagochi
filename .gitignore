@@ -44,8 +44,8 @@ Thumbs.db
 *.sqlite
 *.sqlite3
 
-# Drizzle
-drizzle/
+# Drizzle: ignore only root-level drizzle dir if any; keep apps/backend/drizzle/*.sql migrations in repo
+/drizzle/
 
 # Uploads
 uploads/
